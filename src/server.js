@@ -3,10 +3,9 @@ import cors from 'cors'
 import dotenv from "dotenv"
 import listEndpoints from "express-list-endpoints"
 dotenv.config()
-import { testDbConnection } from './utils/db/connect.js'
 import productRouter from './services/products/index.js'
 import reviewRouter from './services/reviews/reviews.js'
-
+import sequelize, { testDbConnection } from './utils/db/connect.js'
 
 
  const server = express()
@@ -17,9 +16,11 @@ import reviewRouter from './services/reviews/reviews.js'
  server.use('/products', productRouter)
  server.use('/reviews', reviewRouter)
 
- server.listen( process.env.PORT || 3001 , ()=>{
+ server.listen( process.env.PORT || 3001 ,  async()=>{
      console.log(`Server is running with ${PORT}`)
-     testDbConnection();
+     await testDbConnection();
+     await sequelize.sync();
+
      console.table(listEndpoints(server))
  })
 
